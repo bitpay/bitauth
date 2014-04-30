@@ -1,0 +1,25 @@
+{
+  "name": "bitauth",
+  "version": "0.0.1",
+  "author": "Satoshi Nakamoto <satoshi@bitpay.com>",
+  "description": "The secure authentication framework, built on Bitcore.",
+  "contributors": [ 
+    {
+      "name": "Patrick Nagurny",
+      "email": "patrick@bitpay.com"
+    } 
+  ],
+  "keywords": [
+    "bitcoin",
+    "SIN",
+    "System Identification Number",
+    "token"
+  ],
+  "dependencies" : {
+    "bitcore"   :  ">0.1.0"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=0.10"
+  }
+}
