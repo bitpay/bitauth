@@ -1,0 +1,16 @@
+{
+  "name": "bitauth",
+  "description": "Passwordless authentication using Bitcoin cryptography",
+  "author": {
+    "name": "Patrick Nagurny",
+    "email": "patrick@bitpay.com"
+  },
+  "version": "0.1.0",
+  "dependencies": {
+    "bitcore": ">= 0.1.9",
+    "request": "^2.36.0",
+    "express": "^4.3.1",
+    "base58-native": "^0.1.4",
+    "body-parser": "^1.2.0"
+  }
+}
