@@ -1,1 +1,3 @@
 node_modules
+dist/bitauth.browser.js
+dist/bitauth.browser.min.js
