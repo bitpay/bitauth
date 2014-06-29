@@ -178,3 +178,10 @@ for(k in keys) {
 }
 
 ```
+
+## Middleware
+BitAuth exposes a connect middleware for use in connect or ExpressJS applications.  Use:
+```
+var bitauth = require('bitauth');
+app.use( bitauth.middleware );
+```
