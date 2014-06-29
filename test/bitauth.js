@@ -79,4 +79,14 @@ describe('bitauth', function() {
 
   });
 
+  describe('#middleware', function() {
+
+    it('should expose an express middleware', function(done) {
+      bitauth.middleware( {} , {} , function() {
+        done();
+      });
+    });
+
+  });
+
 });

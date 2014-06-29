@@ -7,13 +7,17 @@
   },
   "contributors": [
     {
+      "name": "Eric Martindale",
+      "email": "eric@ericmartindale.com"
+    },
+    {
       "name": "Gordon Hall",
       "email": "gordon@bitpay.com"
     }
   ],
   "scripts": {
     "make-dist": "sh scripts/make-dist.sh",
-    "test": "node_modules/.bin/mocha test/* --reporter spec",
+    "test": "mocha test/* --reporter spec",
     "postinstall": "npm run make-dist"
   },
   "main": "index.js",
