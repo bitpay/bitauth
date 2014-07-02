@@ -23,6 +23,45 @@ describe('bitauth', function() {
 
   });
 
+  describe('#genHSin', function() {
+    
+    it('should generate a hierarchical sin object', function() {
+      var hsin = bitauth.genHSin();
+      should.exist(hsin.hsinpriv);
+      hsin.hsinpriv.length.should.equal(111);
+      should.exist(hsin.SIN);
+    });
+
+  });
+
+  describe('#hSin', function() {
+
+    it('should generate m/1/3', function() {
+      var hsin = bitauth.genHSin();
+      hsin = bitauth.hSin(hsin.hsinpriv, 'm/1/3');
+      should.exist(hsin.hsinpriv);
+      hsin.hsinpriv.length.should.equal(111);
+      should.exist(hsin.SIN);
+    });
+
+    it('should generate m/0/4', function() {
+      var hsin = bitauth.genHSin();
+      hsin = bitauth.hSin(hsin.hsinpriv, 'm/0/4');
+      should.exist(hsin.hsinpriv);
+      hsin.hsinpriv.length.should.equal(111);
+      should.exist(hsin.SIN);
+    });
+
+    it('should generate m/9/3/3/2/4000', function() {
+      var hsin = bitauth.genHSin();
+      hsin = bitauth.hSin(hsin.hsinpriv, 'm/9/3/3/2/4000');
+      should.exist(hsin.hsinpriv);
+      hsin.hsinpriv.length.should.equal(111);
+      should.exist(hsin.SIN);
+    });
+
+  });
+
   describe('#getPublicKeyFromPrivateKey', function() {
 
     it('should properly get the public key', function(done) {
