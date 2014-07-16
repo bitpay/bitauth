@@ -33,6 +33,7 @@
     "uglify-js": "~2.4.14",
     "browserify": "~4.1.11",
     "should": "~4.0.4",
+    "expect.js": "~0.3.1",
     "mocha": "~1.20.1"
   }
 }
