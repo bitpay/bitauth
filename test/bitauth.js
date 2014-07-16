@@ -1,9 +1,12 @@
 var should  = require('should');
+var expect  = require('expect.js');
 var bitauth = require('../index');
 
 describe('bitauth', function() {
 
   var keys      = null;
+  var sin       = 'Tf1Jc1xSbqasm5QLwwSQc5umddx2h7mAMHX';
+  var sinb      = 'Tf1Jc1xSbqasm5QLwwSQc5umddx2h7mAMhX';
   var contract  = 'keyboard cat';
   var secret    = 'o hai, nsa. how i do teh cryptos?';
   var password  = 's4705hiru13z!';
@@ -55,6 +58,42 @@ describe('bitauth', function() {
 
     it('should verify the signature', function(done) {
       bitauth.verifySignature(contract, keys.pub, signature, done);
+    });
+
+  });
+
+  describe('#validateSinTrue', function() {
+
+    it('should validate the sin as true', function(done) {
+      var valid = bitauth.validateSin(sin);
+      should.equal(true, valid);
+      done();
+    });
+
+  });
+
+  describe('#validateSinFalse', function() {
+
+    it('should validate the sin as false', function(done) {
+      var valid = bitauth.validateSin(sinb);
+      should.equal(false, valid);
+      done();
+    });
+
+  });
+
+  describe('#validateSinCallback', function() {
+
+    var received;
+
+    var valid = bitauth.validateSin(sinb, function(err){
+      if ( err && typeof(err) == 'object' ) {
+        received = true;
+      }
+    });
+
+    it('should receive error callback', function() {
+      expect(received).to.eql(true);
     });
 
   });
