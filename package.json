@@ -6,6 +6,10 @@
     "name": "Patrick Nagurny",
     "email": "patrick@bitpay.com"
   },
+  "repository":{
+    "type": "git",
+    "url": "https://github.com/bitpay/bitauth.git"
+  },
   "contributors": [
     {
       "name": "Eric Martindale",
