@@ -6,7 +6,7 @@
     "name": "Patrick Nagurny",
     "email": "patrick@bitpay.com"
   },
-  "repository":{
+  "repository": {
     "type": "git",
     "url": "https://github.com/bitpay/bitauth.git"
   },
