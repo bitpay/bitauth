@@ -1,22 +1,49 @@
 var request = require('request');
-var bitauth = require('../lib/bitauth');
+var BitAuth = require('../lib/bitauth');
+var bitauth = new BitAuth();
 
-// These can be generated with bitauth.generateSin()
+// These can be generated with bitauth.generateIdentity()
 var keys = {
-  alice: '38f93bdda21a5c4a7bae4eb75bb7811cbc3eb627176805c1009ff2099263c6ad',
-  bob: '09880c962437080d72f72c8c63a69efd65d086c9e7851a87b76373eb6ce9aab5'
+  alice: 'L1i9Xe5gVdg78Cc1U1aCUGG8ZjZ5qieL9axpmKxwjak8FFbSnfYQ',
+  bob: 'KxpMscE4vhkdTbVHFDuWjYh73APHGATLy1ZndDdL5jCy5d9Kv166'
 };
+
+console.log('Alice:')
+var alice = new BitAuth();
+alice.generateIdentity();
+console.log( alice._keypair.privkey.toString() );
+console.log( alice._keypair.pubkey.toString() );
+console.log( 'pubDER:' , alice._keypair.pubkey.toDER().toString('hex') );
+console.log( alice._identity.toString() );
+
+console.log('Bob:')
+var bob = new BitAuth();
+bob.generateIdentity();
+console.log( bob._keypair.privkey.toString() );
+console.log( bob._keypair.pubkey.toString() );
+console.log( 'pubDER:' , bob._keypair.pubkey.toDER().toString('hex') );
+console.log( bob._identity.toString() );
+
+var keys = {
+  alice: alice,
+  bob: bob
+}
+
+console.log('keys', keys);
 
 // GET
 
 for(k in keys) {
+  
+  console.log( keys[k]._keypair.privkey )
+
   var url = 'http://localhost:3000/user';
   var dataToSign = url;
   var options = {
     url: url,
     headers: {
-      'x-identity': bitauth.getPublicKeyFromPrivateKey(keys[k]),
-      'x-signature': bitauth.sign(dataToSign, keys[k])
+      'x-identity':  keys[k]._identity.toString() ,
+      'x-signature': bitauth.sign( dataToSign , keys[k]._keypair )
     }
   };
 
@@ -41,8 +68,8 @@ for(k in keys) {
   var options = {
     url: url,
     headers: {
-      'x-identity': bitauth.getPublicKeyFromPrivateKey(keys[k]),
-      'x-signature': bitauth.sign(dataToSign, keys[k])
+      'x-identity': keys[k]._identity.toString(),
+      'x-signature': bitauth.sign( dataToSign , keys[k]._keypair )
     },
     json: data
   };
