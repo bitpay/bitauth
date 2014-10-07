@@ -5,22 +5,22 @@ var bitauth = require('../index');
 describe('bitauth', function() {
 
   var keys      = null;
-  var sin       = 'Tf1Jc1xSbqasm5QLwwSQc5umddx2h7mAMHX';
-  var sinb      = 'Tf1Jc1xSbqasm5QLwwSQc5umddx2h7mAMhX';
+  var identity  = 'Tf1Jc1xSbqasm5QLwwSQc5umddx2h7mAMHX';
+  var identityb = 'Tf1Jc1xSbqasm5QLwwSQc5umddx2h7mAMhX';
   var contract  = 'keyboard cat';
   var secret    = 'o hai, nsa. how i do teh cryptos?';
   var password  = 's4705hiru13z!';
   var signature = null;
   var enc       = null;
 
-  describe('#generateSin', function() {
+  describe('#generateIdentity', function() {
 
-    it('should generate a sin object', function(done) {
-      keys = bitauth.generateSin();
+    it('should generate a identity object', function(done) {
+      keys = bitauth.generateIdentity()._keypair;
       should.exist(keys);
-      should.exist(keys.pub);
-      should.exist(keys.priv);
-      should.exist(keys.sin);
+      should.exist(keys._keypair.pubkey);
+      should.exist(keys._keypair.privkey);
+      should.exist(keys._identity);
       done();
     });
 
@@ -35,10 +35,10 @@ describe('bitauth', function() {
 
   });
 
-  describe('#getSinFromPublicKey', function() {
+  describe('#getIdentityFromPublicKey', function() {
 
-    it('should properly get the sin', function(done) {
-      bitauth.getSinFromPublicKey(keys.pub).should.equal(keys.sin);
+    it('should properly get the identity', function(done) {
+      bitauth.getIdentityFromPublicKey(keys.pub).should.equal(keys.identity);
       done();
     });
 
@@ -62,31 +62,31 @@ describe('bitauth', function() {
 
   });
 
-  describe('#validateSinTrue', function() {
+  describe('#validateIdentityTrue', function() {
 
-    it('should validate the sin as true', function(done) {
-      var valid = bitauth.validateSin(sin);
+    it('should validate the identity as true', function(done) {
+      var valid = bitauth.validateIdentity(identity);
       should.equal(true, valid);
       done();
     });
 
   });
 
-  describe('#validateSinFalse', function() {
+  describe('#validateIdentityFalse', function() {
 
-    it('should validate the sin as false', function(done) {
-      var valid = bitauth.validateSin(sinb);
+    it('should validate the identity as false', function(done) {
+      var valid = bitauth.validateIdentity(identityb);
       should.equal(false, valid);
       done();
     });
 
   });
 
-  describe('#validateSinCallback', function() {
+  describe('#validateIdentityCallback', function() {
 
     var received;
 
-    var valid = bitauth.validateSin(sinb, function(err){
+    var valid = bitauth.validateIdentity(identityb, function(err){
       if ( err && typeof(err) == 'object' ) {
         received = true;
       }
