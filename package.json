@@ -1,15 +1,11 @@
-
 {
   "name": "bitauth",
   "description": "Passwordless authentication using Bitcoin cryptography",
   "author": {
-    "name": "Patrick Nagurny",
-    "email": "patrick@bitpay.com"
+    "name": "BitPay",
+    "email": "dev@bitpay.com"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bitpay/bitauth.git"
-  },
+  "repository": "https://github.com/bitpay/bitauth.git",
   "contributors": [
     {
       "name": "Eric Martindale",
@@ -18,6 +14,10 @@
     {
       "name": "Gordon Hall",
       "email": "gordon@bitpay.com"
+    },
+    {
+      "name": "Patrick Nagurny",
+      "email": "patrick@bitpay.com"
     }
   ],
   "scripts": {
@@ -26,14 +26,12 @@
     "postinstall": "npm run make-dist"
   },
   "main": "index.js",
-  "version": "0.1.1",
-  "repository": "https://github.com/bitpay/bitauth.git",
+  "version": "0.3.0",
   "dependencies": {
-    "bitcore": "0.1.32",
-    "request": "^2.36.0",
+    "bitcore": "bitpay/bitcore#v0.8",
+    "body-parser": "^1.2.0",
     "express": "^4.3.1",
-    "base58-native": "^0.1.4",
-    "body-parser": "^1.2.0"
+    "request": "^2.36.0"
   },
   "devDependencies": {
     "uglify-js": "~2.4.14",

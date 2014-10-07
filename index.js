@@ -1,9 +1,11 @@
+'use strict';
+
 // get base functionality
-var bitauth = require('./lib/bitauth');
+var BitAuth = require('./lib/bitauth');
 
 // add node-specific encrypt/decrypt
-bitauth.encrypt = require('./lib/encrypt');
-bitauth.decrypt = require('./lib/decrypt');
-bitauth.middleware = require('./lib/middleware/bitauth');
+BitAuth.encrypt    = require('./lib/encrypt');
+BitAuth.decrypt    = require('./lib/decrypt');
+BitAuth.middleware = require('./lib/middleware/bitauth');
 
-module.exports = bitauth;
+module.exports = BitAuth;
