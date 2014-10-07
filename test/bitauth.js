@@ -1,8 +1,8 @@
 var should  = require('should');
 var expect  = require('expect.js');
-var bitauth = require('../index');
+var BitAuth = require('../index');
 
-describe('bitauth', function() {
+describe('new BitAuth()', function() {
 
   var keys      = null;
   var identity  = 'Tf1Jc1xSbqasm5QLwwSQc5umddx2h7mAMHX';
@@ -16,7 +16,7 @@ describe('bitauth', function() {
   describe('#generateIdentity', function() {
 
     it('should generate a identity object', function(done) {
-      keys = bitauth.generateIdentity()._keypair;
+      keys = new BitAuth().generateIdentity();
       should.exist(keys);
       should.exist(keys._keypair.pubkey);
       should.exist(keys._keypair.privkey);
@@ -29,16 +29,7 @@ describe('bitauth', function() {
   describe('#getPublicKeyFromPrivateKey', function() {
 
     it('should properly get the public key', function(done) {
-      bitauth.getPublicKeyFromPrivateKey(keys.priv).should.equal(keys.pub);
-      done();
-    });
-
-  });
-
-  describe('#getIdentityFromPublicKey', function() {
-
-    it('should properly get the identity', function(done) {
-      bitauth.getIdentityFromPublicKey(keys.pub).should.equal(keys.identity);
+      new BitAuth().getPublicKeyFromPrivateKey(keys._keypair.privkey).toString().should.equal(keys._keypair.pubkey.toString());
       done();
     });
 
@@ -47,7 +38,7 @@ describe('bitauth', function() {
   describe('#sign', function() {
 
     it('should sign the string', function(done) {
-      signature = bitauth.sign(contract, keys.priv);
+      signature = new BitAuth().sign(contract, keys._keypair.privkey);
       should.exist(signature);
       done();
     });
@@ -57,43 +48,25 @@ describe('bitauth', function() {
   describe('#verifySignature', function() {
 
     it('should verify the signature', function(done) {
-      bitauth.verifySignature(contract, keys.pub, signature, done);
+      new BitAuth().verifySignature(contract, keys._keypair.pubkey, signature, done);
     });
 
   });
 
-  describe('#validateIdentityTrue', function() {
+  describe('#validateIdentity', function() {
+
+    var received;
 
     it('should validate the identity as true', function(done) {
-      var valid = bitauth.validateIdentity(identity);
+      var valid = new BitAuth().validateIdentity(identity);
       should.equal(true, valid);
       done();
     });
 
-  });
-
-  describe('#validateIdentityFalse', function() {
-
     it('should validate the identity as false', function(done) {
-      var valid = bitauth.validateIdentity(identityb);
+      var valid = new BitAuth().validateIdentity(identityb);
       should.equal(false, valid);
       done();
-    });
-
-  });
-
-  describe('#validateIdentityCallback', function() {
-
-    var received;
-
-    var valid = bitauth.validateIdentity(identityb, function(err){
-      if ( err && typeof(err) == 'object' ) {
-        received = true;
-      }
-    });
-
-    it('should receive error callback', function() {
-      expect(received).to.eql(true);
     });
 
   });
@@ -101,7 +74,7 @@ describe('bitauth', function() {
   describe('#encrypt', function() {
 
     it('should encrypt the secret message', function(done) {
-      enc = bitauth.encrypt(password, secret);
+      enc = BitAuth.encrypt(password, secret);
       should.exist(enc);
       done();
     });
@@ -111,7 +84,7 @@ describe('bitauth', function() {
   describe('#decrypt', function() {
 
     it('should decrypt the secret message', function(done) {
-      var dec = bitauth.decrypt(password, enc);
+      var dec = BitAuth.decrypt(password, enc);
       should.exist(dec);
       done();
     });
@@ -121,7 +94,7 @@ describe('bitauth', function() {
   describe('#middleware', function() {
 
     it('should expose an express middleware', function(done) {
-      bitauth.middleware( {} , {} , function() {
+      BitAuth.middleware( {} , {} , function() {
         done();
       });
     });

@@ -28,8 +28,7 @@
   "main": "index.js",
   "version": "0.2.0",
   "dependencies": {
-    "base58-native": "^0.1.4",
-    "bitcore": "bitcore",
+    "bitcore": "bitpay/bitcore#v0.8",
     "body-parser": "^1.2.0",
     "express": "^4.3.1",
     "request": "^2.36.0"
