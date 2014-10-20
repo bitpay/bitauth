@@ -185,3 +185,22 @@ BitAuth exposes a connect middleware for use in connect or ExpressJS application
 var bitauth = require('bitauth');
 app.use( bitauth.middleware );
 ```
+
+## Development
+
+To run tests for Node.js:
+
+```bash
+npm run test
+```
+
+To run tests for a web browser:
+
+```bash
+npm run make-dist
+
+firefox $PWD/test/index.html
+chromium-browser $PWD/test/index.html
+```
+
+Or open the file directly from a web browser.

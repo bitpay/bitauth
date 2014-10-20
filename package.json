@@ -15,9 +15,13 @@
       "email": "gordon@bitpay.com"
     }
   ],
+  "repository": {
+    "url": "git@github.com:bitpay/bitauth.git",
+    "type": "git"
+  },
   "scripts": {
     "make-dist": "sh scripts/make-dist.sh",
-    "test": "mocha test/* --reporter spec",
+    "test": "mocha test/*.js --reporter spec",
     "postinstall": "npm run make-dist"
   },
   "main": "index.js",
@@ -32,7 +36,7 @@
   "devDependencies": {
     "uglify-js": "~2.4.14",
     "browserify": "~4.1.11",
-    "should": "~4.0.4",
+    "chai": "=1.9.1",
     "mocha": "~1.20.1"
   }
 }

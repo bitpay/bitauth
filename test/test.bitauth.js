@@ -1,7 +1,16 @@
-var should  = require('should');
-var bitauth = require('../index');
+'use strict';
+
+if ( typeof(window) === 'undefined' ) {
+  var bitauth = require('../index');
+} else {
+  var bitauth = window.bitauth;
+}
+
+var chai = chai || require('chai');
 
 describe('bitauth', function() {
+
+  var should = chai.should();
 
   var keys      = null;
   var contract  = 'keyboard cat';
@@ -59,34 +68,39 @@ describe('bitauth', function() {
 
   });
 
-  describe('#encrypt', function() {
+  // node specific tests
+  if ( typeof(window) === 'undefined' ) {
 
-    it('should encrypt the secret message', function(done) {
-      enc = bitauth.encrypt(password, secret);
-      should.exist(enc);
-      done();
-    });
+    describe('#encrypt', function() {
 
-  });
-
-  describe('#decrypt', function() {
-
-    it('should decrypt the secret message', function(done) {
-      var dec = bitauth.decrypt(password, enc);
-      should.exist(dec);
-      done();
-    });
-
-  });
-
-  describe('#middleware', function() {
-
-    it('should expose an express middleware', function(done) {
-      bitauth.middleware( {} , {} , function() {
+      it('should encrypt the secret message', function(done) {
+        enc = bitauth.encrypt(password, secret);
+        should.exist(enc);
         done();
       });
+
     });
 
-  });
+    describe('#decrypt', function() {
+
+      it('should decrypt the secret message', function(done) {
+        var dec = bitauth.decrypt(password, enc);
+        should.exist(dec);
+        done();
+      });
+
+    });
+
+    describe('#middleware', function() {
+
+      it('should expose an express middleware', function(done) {
+        bitauth.middleware( {} , {} , function() {
+          done();
+        });
+      });
+
+    });
+
+  }
 
 });
