@@ -20,10 +20,6 @@
       "email": "gordon@bitpay.com"
     }
   ],
-  "repository": {
-    "url": "git@github.com:bitpay/bitauth.git",
-    "type": "git"
-  },
   "scripts": {
     "make-dist": "sh scripts/make-dist.sh",
     "test": "mocha test/*.js --reporter spec",
@@ -31,7 +27,6 @@
   },
   "main": "index.js",
   "version": "0.1.1",
-  "repository": "https://github.com/bitpay/bitauth.git",
   "dependencies": {
     "bitcore": "0.1.32",
     "request": "^2.36.0",
