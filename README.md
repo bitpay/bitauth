@@ -29,10 +29,10 @@ See https://en.bitcoin.it/wiki/Identity_protocol_v1 for complete details.
 
 In each request, the client includes a nonce to prevent replay attacks. The client
 signs the full url with the request body concatenated if there is one. The signature 
-is included in the x-signature header and the public key is included in the 
-x-pubkey header.
+is included in the `x-signature` header and the public key is included in the 
+`x-identity` header.
 
-The server verifies that the signature is valid and that it matches the public key.
+The server verifies that the signature is valid and that it matches the identity (the public key).
 It then computes the SIN from the public key, and sees whether that SIN has access
 to the requested resource. The nonce is checked to make sure it is higher than 
 the previously used nonce.
@@ -135,7 +135,7 @@ for(k in keys) {
   var options = {
     url: url,
     headers: {
-      'x-pubkey': bitauth.getPublicKeyFromPrivateKey(keys[k]),
+      'x-identity': bitauth.getPublicKeyFromPrivateKey(keys[k]),
       'x-signature': bitauth.sign(dataToSign, keys[k])
     }
   };
@@ -161,7 +161,7 @@ for(k in keys) {
   var options = {
     url: url,
     headers: {
-      'x-pubkey': bitauth.getPublicKeyFromPrivateKey(keys[k]),
+      'x-identity': bitauth.getPublicKeyFromPrivateKey(keys[k]),
       'x-signature': bitauth.sign(dataToSign, keys[k])
     },
     json: data

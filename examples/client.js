@@ -15,7 +15,7 @@ for(k in keys) {
   var options = {
     url: url,
     headers: {
-      'x-pubkey': bitauth.getPublicKeyFromPrivateKey(keys[k]),
+      'x-identity': bitauth.getPublicKeyFromPrivateKey(keys[k]),
       'x-signature': bitauth.sign(dataToSign, keys[k])
     }
   };
@@ -41,7 +41,7 @@ for(k in keys) {
   var options = {
     url: url,
     headers: {
-      'x-pubkey': bitauth.getPublicKeyFromPrivateKey(keys[k]),
+      'x-identity': bitauth.getPublicKeyFromPrivateKey(keys[k]),
       'x-signature': bitauth.sign(dataToSign, keys[k])
     },
     json: data

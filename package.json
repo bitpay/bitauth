@@ -1,9 +1,14 @@
+
 {
   "name": "bitauth",
   "description": "Passwordless authentication using Bitcoin cryptography",
   "author": {
     "name": "Patrick Nagurny",
     "email": "patrick@bitpay.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bitpay/bitauth.git"
   },
   "contributors": [
     {
@@ -26,8 +31,9 @@
   },
   "main": "index.js",
   "version": "0.1.1",
+  "repository": "https://github.com/bitpay/bitauth.git",
   "dependencies": {
-    "bitcore": ">= 0.1.9",
+    "bitcore": "0.1.32",
     "request": "^2.36.0",
     "express": "^4.3.1",
     "base58-native": "^0.1.4",
