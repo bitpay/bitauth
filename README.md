@@ -188,19 +188,24 @@ app.use( bitauth.middleware );
 
 ## Development
 
+To build a browser compatible version of BitAuth, run the following command from the project's root directory:
+
+```
+npm run make-dist
+```
+
+This will output `bitauth.browser.min.js` to the `dist` directory. The script introduces a global variable at `window.bitauth`.
+
+
+To then run tests for a web browser open `test/index.html` in a browser, such as:
+
+```bash
+firefox test/index.html
+chromium-browser test/index.html
+```
+
 To run tests for Node.js:
 
 ```bash
 npm run test
 ```
-
-To run tests for a web browser:
-
-```bash
-npm run make-dist
-
-firefox $PWD/test/index.html
-chromium-browser $PWD/test/index.html
-```
-
-Or open the file directly from a web browser.
