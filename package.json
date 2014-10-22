@@ -22,12 +22,11 @@
   ],
   "scripts": {
     "make-dist": "sh scripts/make-dist.sh",
-    "test": "mocha test/* --reporter spec",
+    "test": "mocha test/*.js --reporter spec",
     "postinstall": "npm run make-dist"
   },
   "main": "index.js",
   "version": "0.1.1",
-  "repository": "https://github.com/bitpay/bitauth.git",
   "dependencies": {
     "bitcore": "0.1.32",
     "request": "^2.36.0",
@@ -37,9 +36,8 @@
   },
   "devDependencies": {
     "uglify-js": "~2.4.14",
-    "browserify": "~4.1.11",
-    "should": "~4.0.4",
-    "expect.js": "~0.3.1",
+    "browserify": "=6.1.0",
+    "chai": "=1.9.1",
     "mocha": "~1.20.1"
   }
 }

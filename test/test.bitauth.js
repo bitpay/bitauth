@@ -1,8 +1,16 @@
-var should  = require('should');
-var expect  = require('expect.js');
-var bitauth = require('../index');
+'use strict';
+
+if ( typeof(window) === 'undefined' ) {
+  var bitauth = require('../index');
+} else {
+  var bitauth = window.bitauth;
+}
+
+var chai = chai || require('chai');
 
 describe('bitauth', function() {
+
+  var should = chai.should();
 
   var keys      = null;
   var sin       = 'Tf1Jc1xSbqasm5QLwwSQc5umddx2h7mAMHX';
@@ -84,48 +92,47 @@ describe('bitauth', function() {
 
   describe('#validateSinCallback', function() {
 
-    var received;
-
-    var valid = bitauth.validateSin(sinb, function(err){
-      if ( err && typeof(err) == 'object' ) {
-        received = true;
-      }
-    });
-
-    it('should receive error callback', function() {
-      expect(received).to.eql(true);
-    });
-
-  });
-
-  describe('#encrypt', function() {
-
-    it('should encrypt the secret message', function(done) {
-      enc = bitauth.encrypt(password, secret);
-      should.exist(enc);
-      done();
-    });
-
-  });
-
-  describe('#decrypt', function() {
-
-    it('should decrypt the secret message', function(done) {
-      var dec = bitauth.decrypt(password, enc);
-      should.exist(dec);
-      done();
-    });
-
-  });
-
-  describe('#middleware', function() {
-
-    it('should expose an express middleware', function(done) {
-      bitauth.middleware( {} , {} , function() {
+    it('should receive error callback', function(done) {
+      var valid = bitauth.validateSin(sinb, function(err){
+        should.exist(err);
         done();
       });
     });
 
   });
+
+  // node specific tests
+  if ( typeof(window) === 'undefined' ) {
+
+    describe('#encrypt', function() {
+
+      it('should encrypt the secret message', function(done) {
+        enc = bitauth.encrypt(password, secret);
+        should.exist(enc);
+        done();
+      });
+    });
+
+    describe('#decrypt', function() {
+
+      it('should decrypt the secret message', function(done) {
+        var dec = bitauth.decrypt(password, enc);
+        should.exist(dec);
+        done();
+      });
+
+    });
+
+    describe('#middleware', function() {
+
+      it('should expose an express middleware', function(done) {
+        bitauth.middleware( {} , {} , function() {
+          done();
+        });
+      });
+
+    });
+
+  }
 
 });

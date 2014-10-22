@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>BitAuth Tests</title>
+  </head>
+  <body>
+    <div id="mocha"></div>
+    <script src="../node_modules/mocha/mocha.js"></script>
+    <script src="../node_modules/chai/chai.js"></script>
+    <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
+    <script type="text/javascript" src="../dist/bitauth.browser.min.js"></script>
+    <script>
+      mocha.setup('bdd');
+    </script>
+    <script type="text/javascript" src="test.bitauth.js"></script>
+    <script>
+      mocha.run();
+    </script>
+  </body>
+</html>
