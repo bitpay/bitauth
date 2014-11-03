@@ -19,6 +19,9 @@ describe('bitauth', function() {
     sin: 'Tf3yr5tYvccKNVrE26BrPs6LWZRh8woHwjR'
   }
 
+  // a private key that will produce a public key with a leading zero
+  var privateKeyToZero = 'c6b7f6bfe5bb19b1e390e55ed4ba5df8af6068d0eb89379a33f9c19aacf6c08c';
+
   // keys generated
   var keys      = null;
 
@@ -97,6 +100,24 @@ describe('bitauth', function() {
         valid.should.equal(true);
         done();
       });
+    });
+
+    it('should verify the signature with leading zero public key', function(done) {
+
+      var leadingZeroKeys = {
+        priv: privateKeyToZero,
+        pub: bitauth.getPublicKeyFromPrivateKey(privateKeyToZero)
+      };
+
+      signature = bitauth.sign(contract, leadingZeroKeys.priv);
+      bitauth.verifySignature(contract, leadingZeroKeys.pub, signature, function(err, valid){
+        should.not.exist(err);
+        should.exist(valid);
+        valid.should.equal(true);
+      });
+
+      done();
+
     });
 
   });
