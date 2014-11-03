@@ -134,8 +134,14 @@ describe('bitauth', function() {
 
   describe('#validateSinFalse', function() {
 
-    it('should validate the sin as false', function(done) {
+    it('should validate the sin as false because of bad checksum', function(done) {
       var valid = bitauth.validateSin(sinbad);
+      should.equal(false, valid);
+      done();
+    });
+
+    it('should validate the sin as false because of non-base58', function(done) {
+      var valid = bitauth.validateSin('not#base!58');
       should.equal(false, valid);
       done();
     });

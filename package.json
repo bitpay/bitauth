@@ -21,6 +21,7 @@
   ],
   "scripts": {
     "make-dist": "sh scripts/make-dist.sh",
+    "postinstall": "npm run make-dist",
     "test": "mocha test/*.js --reporter spec"
   },
   "main": "index.js",
