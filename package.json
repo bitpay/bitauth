@@ -17,6 +17,10 @@
     {
       "name": "Gordon Hall",
       "email": "gordon@bitpay.com"
+    },
+    {
+      "name": "Braydon Fuller",
+      "email": "braydon@bitpay.com"
     }
   ],
   "scripts": {
