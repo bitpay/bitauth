@@ -26,10 +26,10 @@ describe('bitauth', function() {
   var keys      = null;
 
   // invalid checksum
-  var sinbad      = 'Tf1Jc1xSbqasm5QLwwSQc5umddx2h7mAMhX';
+  var sinbad    = 'Tf1Jc1xSbqasm5QLwwSQc5umddx2h7mAMhX';
 
   // valid sin
-  var singood      = 'TfG4ScDgysrSpodWD4Re5UtXmcLbY5CiUHA';
+  var singood   = 'TfG4ScDgysrSpodWD4Re5UtXmcLbY5CiUHA';
 
   // data to sign
   var contract  = 'keyboard cat';
