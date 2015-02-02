@@ -29,9 +29,9 @@
     "test": "mocha test/*.js --reporter spec"
   },
   "main": "index.js",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "dependencies": {
-    "elliptic": "^0.15.12",
+    "elliptic": "=1.0.0",
     "hash.js": "^0.3.2",
     "bs58": "^2.0.0",
     "request": "^2.36.0",
