@@ -29,7 +29,7 @@
     "test": "mocha test/*.js --reporter spec"
   },
   "main": "index.js",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "dependencies": {
     "elliptic": "=1.0.0",
     "hash.js": "^0.3.2",
