@@ -3,12 +3,27 @@ BitAuth
 
 Passwordless authentication using Bitcoin cryptography
 
-# Overview
+## Overview
 
 BitAuth is a way to do secure, passwordless authentication using the cryptography
 in Bitcoin. Instead of using a shared secret, the client signs each request using
 a private key and the server checks to make sure the signature is valid and matches
 the public key.
+
+## Getting started
+
+Install with Node.js:
+
+```bash
+npm install bitauth
+```
+
+To generate a browser bundle, you can then run:
+
+```bash
+npm run make-dist
+```
+
 
 ## Advantages over other authentication mechanisms
 
@@ -73,11 +88,9 @@ a decentralized blockchain or datastore like namecoin. Key revocations could
 be stored here as well as reviews/feedback to build a reputation around an 
 identity.
 
-# Getting Started
+## Examples
 
-Example server
-
-```
+```javascript
 var express = require('express');
 var bodyParser = require('body-parser');
 var rawBody = require('../lib/middleware/rawbody');
@@ -117,7 +130,7 @@ app.listen(3000);
 
 Example client
 
-```
+```javascript
 var request = require('request');
 var bitauth = require('../lib/bitauth');
 
@@ -181,7 +194,7 @@ for(k in keys) {
 
 ## Middleware
 BitAuth exposes a connect middleware for use in connect or ExpressJS applications.  Use:
-```
+```javascript
 var bitauth = require('bitauth');
 app.use( bitauth.middleware );
 ```
@@ -190,7 +203,7 @@ app.use( bitauth.middleware );
 
 To build a browser compatible version of BitAuth, run the following command from the project's root directory:
 
-```
+```bash
 npm run make-dist
 ```
 
