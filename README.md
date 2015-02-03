@@ -90,6 +90,8 @@ identity.
 
 ## Examples
 
+Example server
+
 ```javascript
 var express = require('express');
 var bodyParser = require('body-parser');
