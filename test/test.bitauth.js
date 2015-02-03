@@ -35,7 +35,8 @@ describe('bitauth', function() {
   var contract  = 'keyboard cat';
   var secret    = 'o hai, nsa. how i do teh cryptos?';
   var password  = 's4705hiru13z!';
-
+  var encryptedSecret = '291Dm9unZMwfxBA7BEHiQsraRxCrMRqwJ2TjCWwEH3Sp5QGMehNFNgZLo62sgF5Khe';
+ 
   // signature from generate keys
   var signature = null;
   var enc       = null;
@@ -177,6 +178,14 @@ describe('bitauth', function() {
       it('should decrypt the secret message', function(done) {
         var dec = bitauth.decrypt(password, enc);
         should.exist(dec);
+        dec.should.equal(secret);
+        done();
+      });
+
+      it('should decrypt a previously known message', function(done) {
+        var dec = bitauth.decrypt(password, encryptedSecret);
+        should.exist(dec);
+        dec.should.equal(secret);
         done();
       });
 
