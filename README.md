@@ -28,7 +28,7 @@ npm run make-dist
 ## Advantages over other authentication mechanisms
 
 * By signing each request, man in the middle attacks are impossible.
-* A nonce is part of the data signed, which prevents replay attacks.
+* ~~A nonce is part of the data signed, which prevents replay attacks.~~ **edit:** the nonce is no longer part of th latest protocol, and replay attacks are not in the scope of problems solved by BitAuth.
 * The cryptography in Bitcoin is rock solid and is securing billions
  of dollars worth of bitcoins.
 * It uses elliptic curve cryptography which performs much better than RSA.
@@ -42,7 +42,7 @@ using elliptic curve secp256k1. The public SIN (System identification number),
 like a bitcoin address, is the RIPEMD 160, SHA256 hash of the public key. 
 See https://en.bitcoin.it/wiki/Identity_protocol_v1 for complete details.
 
-In each request, the client includes a nonce to prevent replay attacks. The client
+In each request, the client includes a nonce ~~to prevent replay attacks~~ (**edit:** see above). The client
 signs the full url with the request body concatenated if there is one. The signature 
 is included in the `x-signature` header and the public key is included in the 
 `x-identity` header.
