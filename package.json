@@ -33,7 +33,7 @@
     "test": "mocha test/*.js --reporter spec"
   },
   "main": "index.js",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "dependencies": {
     "body-parser": "^1.2.0",
     "bs58": "^2.0.0",
