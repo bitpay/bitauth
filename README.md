@@ -1,7 +1,10 @@
 BitAuth
 =======
 
+[![Build Status](https://travis-ci.org/bitpay/bitauth.svg?branch=master)](https://travis-ci.org/bitpay/bitauth)
+
 Passwordless authentication using Bitcoin cryptography
+
 
 ## Overview
 
