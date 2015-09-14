@@ -40,7 +40,6 @@
     "elliptic": "=1.0.0",
     "express": "^4.3.1",
     "hash.js": "^0.3.2",
-    "obvious-closure-library": "^20150605.0.0",
     "request": "^2.36.0"
   },
   "devDependencies": {
