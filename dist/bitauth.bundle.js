@@ -4,33 +4,8 @@ var elliptic  = require('elliptic');
 var ecdsa     = new elliptic.ec(elliptic.curves.secp256k1);
 var hashjs    = require('hash.js');
 var bs58      = require('bs58');
+var sha256    = require('./sha256');
 var BitAuth   = {};
-
-require('obvious-closure-library').bootstrap();
-goog.require('goog.crypt.Sha256');
-
-var bytesToHex = function (bytes) {
-  return bytes.map(function (byte) {
-    return ("00" + (byte & 0xFF).toString(16)).slice(-2);
-  }).join('');
-};
-
-var stringToUtf16ByteArray = function (str) {
-  var out = [];
-  for (var idx = 0; idx < str.length; ++idx) {
-    var n = str.charCodeAt(idx);
-    out.push(n >> 8);
-    out.push(n & 0xFF);
-  }
-  return out;
-};
-
-var sha256 = function (str) {
-  var md = new goog.crypt.Sha256();
-  var bytes = stringToUtf16ByteArray(str);
-  md.update(bytes);
-  return bytesToHex(md.digest());
-};
 
 /**
  * Will return a key pair and identity
@@ -200,8 +175,153 @@ BitAuth.validateSin = function(sin, callback) {
 module.exports = BitAuth;
 
 }).call(this,require("buffer").Buffer)
-},{"bs58":15,"buffer":4,"elliptic":16,"hash.js":38,"obvious-closure-library":46}],2:[function(require,module,exports){
+},{"./sha256":2,"bs58":12,"buffer":4,"elliptic":13,"hash.js":35}],2:[function(require,module,exports){
+/*
+ CryptoJS v3.1.2
+ code.google.com/p/crypto-js
+ (c) 2009-2013 by Jeff Mott. All rights reserved.
+ code.google.com/p/crypto-js/wiki/License
+ */
 
+// Initialization round constants tables
+var K = [];
+
+// Compute constants
+!function () {
+    function isPrime(n) {
+        var sqrtN = Math.sqrt(n);
+        for (var factor = 2; factor <= sqrtN; factor++) {
+            if (!(n % factor)) return false
+        }
+
+        return true
+    }
+
+    function getFractionalBits(n) {
+        return ((n - (n | 0)) * 0x100000000) | 0
+    }
+
+    var n = 2;
+    var nPrime = 0;
+    while (nPrime < 64) {
+        if (isPrime(n)) {
+            K[nPrime] = getFractionalBits(Math.pow(n, 1 / 3));
+            nPrime++
+        }
+
+        n++
+    }
+}();
+
+var bytesToWords = function (bytes) {
+    var words = [];
+    for (var i = 0, b = 0; i < bytes.length; i++, b += 8) {
+        words[b >>> 5] |= bytes[i] << (24 - b % 32)
+    }
+    return words
+};
+
+var wordsToBytes = function (words) {
+    var bytes = [];
+    for (var b = 0; b < words.length * 32; b += 8) {
+        bytes.push((words[b >>> 5] >>> (24 - b % 32)) & 0xFF)
+    }
+    return bytes
+};
+
+// Reusable object
+var W = [];
+
+var processBlock = function (H, M, offset) {
+    // Working variables
+    var a = H[0], b = H[1], c = H[2], d = H[3];
+    var e = H[4], f = H[5], g = H[6], h = H[7];
+
+    // Computation
+    for (var i = 0; i < 64; i++) {
+        if (i < 16) {
+            W[i] = M[offset + i] | 0
+        } else {
+            var gamma0x = W[i - 15];
+            var gamma0 = ((gamma0x << 25) | (gamma0x >>> 7)) ^
+                ((gamma0x << 14) | (gamma0x >>> 18)) ^
+                (gamma0x >>> 3);
+
+            var gamma1x = W[i - 2];
+            var gamma1 = ((gamma1x << 15) | (gamma1x >>> 17)) ^
+                ((gamma1x << 13) | (gamma1x >>> 19)) ^
+                (gamma1x >>> 10);
+
+            W[i] = gamma0 + W[i - 7] + gamma1 + W[i - 16];
+        }
+
+        var ch = (e & f) ^ (~e & g);
+        var maj = (a & b) ^ (a & c) ^ (b & c);
+
+        var sigma0 = ((a << 30) | (a >>> 2)) ^ ((a << 19) | (a >>> 13)) ^ ((a << 10) | (a >>> 22));
+        var sigma1 = ((e << 26) | (e >>> 6)) ^ ((e << 21) | (e >>> 11)) ^ ((e << 7) | (e >>> 25));
+
+        var t1 = h + sigma1 + ch + K[i] + W[i];
+        var t2 = sigma0 + maj;
+
+        h = g;
+        g = f;
+        f = e;
+        e = (d + t1) | 0;
+        d = c;
+        c = b;
+        b = a;
+        a = (t1 + t2) | 0;
+    }
+
+    // Intermediate hash value
+    H[0] = (H[0] + a) | 0;
+    H[1] = (H[1] + b) | 0;
+    H[2] = (H[2] + c) | 0;
+    H[3] = (H[3] + d) | 0;
+    H[4] = (H[4] + e) | 0;
+    H[5] = (H[5] + f) | 0;
+    H[6] = (H[6] + g) | 0;
+    H[7] = (H[7] + h) | 0;
+};
+
+var bytesToHex = function (bytes) {
+    return bytes.map(function (byte) {
+        return ("00" + (byte & 0xFF).toString(16)).slice(-2);
+    }).join('');
+};
+
+var stringToUtf16ByteArray = function (str) {
+    var out = [];
+    for (var idx = 0; idx < str.length; ++idx) {
+        var n = str.charCodeAt(idx);
+        out.push(n >> 8);
+        out.push(n & 0xFF);
+    }
+    return out;
+};
+
+function sha256(message) {
+    var input = stringToUtf16ByteArray(message);
+
+    var H = [0x6A09E667, 0xBB67AE85, 0x3C6EF372, 0xA54FF53A,
+        0x510E527F, 0x9B05688C, 0x1F83D9AB, 0x5BE0CD19];
+
+    var m = bytesToWords(input);
+    var l = input.length * 8;
+
+    m[l >> 5] |= 0x80 << (24 - l % 32);
+    m[((l + 64 >> 9) << 4) + 15] = l;
+
+    for (var i = 0; i < m.length; i += 16) {
+        processBlock(H, m, i);
+    }
+
+    var digestbytes = wordsToBytes(H);
+    return bytesToHex(digestbytes)
+}
+
+module.exports = sha256;
 },{}],3:[function(require,module,exports){
 // http://wiki.commonjs.org/wiki/Unit_Testing/1.0
 //
@@ -564,7 +684,7 @@ var objectKeys = Object.keys || function (obj) {
   return keys;
 };
 
-},{"util/":12}],4:[function(require,module,exports){
+},{"util/":11}],4:[function(require,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -1887,234 +2007,6 @@ if (typeof Object.create === 'function') {
 }
 
 },{}],9:[function(require,module,exports){
-(function (process){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-// resolves . and .. elements in a path array with directory names there
-// must be no slashes, empty elements, or device names (c:\) in the array
-// (so also no leading and trailing slashes - it does not distinguish
-// relative and absolute paths)
-function normalizeArray(parts, allowAboveRoot) {
-  // if the path tries to go above the root, `up` ends up > 0
-  var up = 0;
-  for (var i = parts.length - 1; i >= 0; i--) {
-    var last = parts[i];
-    if (last === '.') {
-      parts.splice(i, 1);
-    } else if (last === '..') {
-      parts.splice(i, 1);
-      up++;
-    } else if (up) {
-      parts.splice(i, 1);
-      up--;
-    }
-  }
-
-  // if the path is allowed to go above the root, restore leading ..s
-  if (allowAboveRoot) {
-    for (; up--; up) {
-      parts.unshift('..');
-    }
-  }
-
-  return parts;
-}
-
-// Split a filename into [root, dir, basename, ext], unix version
-// 'root' is just a slash, or nothing.
-var splitPathRe =
-    /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
-var splitPath = function(filename) {
-  return splitPathRe.exec(filename).slice(1);
-};
-
-// path.resolve([from ...], to)
-// posix version
-exports.resolve = function() {
-  var resolvedPath = '',
-      resolvedAbsolute = false;
-
-  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
-    var path = (i >= 0) ? arguments[i] : process.cwd();
-
-    // Skip empty and invalid entries
-    if (typeof path !== 'string') {
-      throw new TypeError('Arguments to path.resolve must be strings');
-    } else if (!path) {
-      continue;
-    }
-
-    resolvedPath = path + '/' + resolvedPath;
-    resolvedAbsolute = path.charAt(0) === '/';
-  }
-
-  // At this point the path should be resolved to a full absolute path, but
-  // handle relative paths to be safe (might happen when process.cwd() fails)
-
-  // Normalize the path
-  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
-    return !!p;
-  }), !resolvedAbsolute).join('/');
-
-  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
-};
-
-// path.normalize(path)
-// posix version
-exports.normalize = function(path) {
-  var isAbsolute = exports.isAbsolute(path),
-      trailingSlash = substr(path, -1) === '/';
-
-  // Normalize the path
-  path = normalizeArray(filter(path.split('/'), function(p) {
-    return !!p;
-  }), !isAbsolute).join('/');
-
-  if (!path && !isAbsolute) {
-    path = '.';
-  }
-  if (path && trailingSlash) {
-    path += '/';
-  }
-
-  return (isAbsolute ? '/' : '') + path;
-};
-
-// posix version
-exports.isAbsolute = function(path) {
-  return path.charAt(0) === '/';
-};
-
-// posix version
-exports.join = function() {
-  var paths = Array.prototype.slice.call(arguments, 0);
-  return exports.normalize(filter(paths, function(p, index) {
-    if (typeof p !== 'string') {
-      throw new TypeError('Arguments to path.join must be strings');
-    }
-    return p;
-  }).join('/'));
-};
-
-
-// path.relative(from, to)
-// posix version
-exports.relative = function(from, to) {
-  from = exports.resolve(from).substr(1);
-  to = exports.resolve(to).substr(1);
-
-  function trim(arr) {
-    var start = 0;
-    for (; start < arr.length; start++) {
-      if (arr[start] !== '') break;
-    }
-
-    var end = arr.length - 1;
-    for (; end >= 0; end--) {
-      if (arr[end] !== '') break;
-    }
-
-    if (start > end) return [];
-    return arr.slice(start, end - start + 1);
-  }
-
-  var fromParts = trim(from.split('/'));
-  var toParts = trim(to.split('/'));
-
-  var length = Math.min(fromParts.length, toParts.length);
-  var samePartsLength = length;
-  for (var i = 0; i < length; i++) {
-    if (fromParts[i] !== toParts[i]) {
-      samePartsLength = i;
-      break;
-    }
-  }
-
-  var outputParts = [];
-  for (var i = samePartsLength; i < fromParts.length; i++) {
-    outputParts.push('..');
-  }
-
-  outputParts = outputParts.concat(toParts.slice(samePartsLength));
-
-  return outputParts.join('/');
-};
-
-exports.sep = '/';
-exports.delimiter = ':';
-
-exports.dirname = function(path) {
-  var result = splitPath(path),
-      root = result[0],
-      dir = result[1];
-
-  if (!root && !dir) {
-    // No dirname whatsoever
-    return '.';
-  }
-
-  if (dir) {
-    // It has a dirname, strip trailing slash
-    dir = dir.substr(0, dir.length - 1);
-  }
-
-  return root + dir;
-};
-
-
-exports.basename = function(path, ext) {
-  var f = splitPath(path)[2];
-  // TODO: make this comparison case-insensitive on windows?
-  if (ext && f.substr(-1 * ext.length) === ext) {
-    f = f.substr(0, f.length - ext.length);
-  }
-  return f;
-};
-
-
-exports.extname = function(path) {
-  return splitPath(path)[3];
-};
-
-function filter (xs, f) {
-    if (xs.filter) return xs.filter(f);
-    var res = [];
-    for (var i = 0; i < xs.length; i++) {
-        if (f(xs[i], i, xs)) res.push(xs[i]);
-    }
-    return res;
-}
-
-// String.prototype.substr - negative index don't work in IE8
-var substr = 'ab'.substr(-1) === 'b'
-    ? function (str, start, len) { return str.substr(start, len) }
-    : function (str, start, len) {
-        if (start < 0) start = str.length + start;
-        return str.substr(start, len);
-    }
-;
-
-}).call(this,require('_process'))
-},{"_process":10}],10:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -2202,14 +2094,14 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],11:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],12:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -2799,158 +2691,7 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":11,"_process":10,"inherits":8}],13:[function(require,module,exports){
-var indexOf = require('indexof');
-
-var Object_keys = function (obj) {
-    if (Object.keys) return Object.keys(obj)
-    else {
-        var res = [];
-        for (var key in obj) res.push(key)
-        return res;
-    }
-};
-
-var forEach = function (xs, fn) {
-    if (xs.forEach) return xs.forEach(fn)
-    else for (var i = 0; i < xs.length; i++) {
-        fn(xs[i], i, xs);
-    }
-};
-
-var defineProp = (function() {
-    try {
-        Object.defineProperty({}, '_', {});
-        return function(obj, name, value) {
-            Object.defineProperty(obj, name, {
-                writable: true,
-                enumerable: false,
-                configurable: true,
-                value: value
-            })
-        };
-    } catch(e) {
-        return function(obj, name, value) {
-            obj[name] = value;
-        };
-    }
-}());
-
-var globals = ['Array', 'Boolean', 'Date', 'Error', 'EvalError', 'Function',
-'Infinity', 'JSON', 'Math', 'NaN', 'Number', 'Object', 'RangeError',
-'ReferenceError', 'RegExp', 'String', 'SyntaxError', 'TypeError', 'URIError',
-'decodeURI', 'decodeURIComponent', 'encodeURI', 'encodeURIComponent', 'escape',
-'eval', 'isFinite', 'isNaN', 'parseFloat', 'parseInt', 'undefined', 'unescape'];
-
-function Context() {}
-Context.prototype = {};
-
-var Script = exports.Script = function NodeScript (code) {
-    if (!(this instanceof Script)) return new Script(code);
-    this.code = code;
-};
-
-Script.prototype.runInContext = function (context) {
-    if (!(context instanceof Context)) {
-        throw new TypeError("needs a 'context' argument.");
-    }
-    
-    var iframe = document.createElement('iframe');
-    if (!iframe.style) iframe.style = {};
-    iframe.style.display = 'none';
-    
-    document.body.appendChild(iframe);
-    
-    var win = iframe.contentWindow;
-    var wEval = win.eval, wExecScript = win.execScript;
-
-    if (!wEval && wExecScript) {
-        // win.eval() magically appears when this is called in IE:
-        wExecScript.call(win, 'null');
-        wEval = win.eval;
-    }
-    
-    forEach(Object_keys(context), function (key) {
-        win[key] = context[key];
-    });
-    forEach(globals, function (key) {
-        if (context[key]) {
-            win[key] = context[key];
-        }
-    });
-    
-    var winKeys = Object_keys(win);
-
-    var res = wEval.call(win, this.code);
-    
-    forEach(Object_keys(win), function (key) {
-        // Avoid copying circular objects like `top` and `window` by only
-        // updating existing context properties or new properties in the `win`
-        // that was only introduced after the eval.
-        if (key in context || indexOf(winKeys, key) === -1) {
-            context[key] = win[key];
-        }
-    });
-
-    forEach(globals, function (key) {
-        if (!(key in context)) {
-            defineProp(context, key, win[key]);
-        }
-    });
-    
-    document.body.removeChild(iframe);
-    
-    return res;
-};
-
-Script.prototype.runInThisContext = function () {
-    return eval(this.code); // maybe...
-};
-
-Script.prototype.runInNewContext = function (context) {
-    var ctx = Script.createContext(context);
-    var res = this.runInContext(ctx);
-
-    forEach(Object_keys(ctx), function (key) {
-        context[key] = ctx[key];
-    });
-
-    return res;
-};
-
-forEach(Object_keys(Script.prototype), function (name) {
-    exports[name] = Script[name] = function (code) {
-        var s = Script(code);
-        return s[name].apply(s, [].slice.call(arguments, 1));
-    };
-});
-
-exports.createScript = function (code) {
-    return exports.Script(code);
-};
-
-exports.createContext = Script.createContext = function (context) {
-    var copy = new Context();
-    if(typeof context === 'object') {
-        forEach(Object_keys(context), function (key) {
-            copy[key] = context[key];
-        });
-    }
-    return copy;
-};
-
-},{"indexof":14}],14:[function(require,module,exports){
-
-var indexOf = [].indexOf;
-
-module.exports = function(arr, obj){
-  if (indexOf) return arr.indexOf(obj);
-  for (var i = 0; i < arr.length; ++i) {
-    if (arr[i] === obj) return i;
-  }
-  return -1;
-};
-},{}],15:[function(require,module,exports){
+},{"./support/isBuffer":10,"_process":9,"inherits":8}],12:[function(require,module,exports){
 // Base58 encoding/decoding
 // Originally written by Mike Hearn for BitcoinJ
 // Copyright (c) 2011 Google Inc
@@ -3037,7 +2778,7 @@ module.exports = {
   decode: decode
 }
 
-},{}],16:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 var elliptic = exports;
 
 elliptic.version = require('../package.json').version;
@@ -3050,7 +2791,7 @@ elliptic.curves = require('./elliptic/curves');
 // Protocols
 elliptic.ec = require('./elliptic/ec');
 
-},{"../package.json":37,"./elliptic/curve":19,"./elliptic/curves":22,"./elliptic/ec":23,"./elliptic/hmac-drbg":26,"./elliptic/utils":27,"brorand":29}],17:[function(require,module,exports){
+},{"../package.json":34,"./elliptic/curve":16,"./elliptic/curves":19,"./elliptic/ec":20,"./elliptic/hmac-drbg":23,"./elliptic/utils":24,"brorand":26}],14:[function(require,module,exports){
 var assert = require('assert');
 var bn = require('bn.js');
 var elliptic = require('../../elliptic');
@@ -3354,7 +3095,7 @@ BasePoint.prototype.dblp = function dblp(k) {
   return r;
 };
 
-},{"../../elliptic":16,"assert":3,"bn.js":28}],18:[function(require,module,exports){
+},{"../../elliptic":13,"assert":3,"bn.js":25}],15:[function(require,module,exports){
 var assert = require('assert');
 var curve = require('../curve');
 var elliptic = require('../../elliptic');
@@ -3717,7 +3458,7 @@ Point.prototype.getY = function getY() {
 Point.prototype.toP = Point.prototype.normalize;
 Point.prototype.mixedAdd = Point.prototype.add;
 
-},{"../../elliptic":16,"../curve":19,"assert":3,"bn.js":28,"inherits":36}],19:[function(require,module,exports){
+},{"../../elliptic":13,"../curve":16,"assert":3,"bn.js":25,"inherits":33}],16:[function(require,module,exports){
 var curve = exports;
 
 curve.base = require('./base');
@@ -3725,7 +3466,7 @@ curve.short = require('./short');
 curve.mont = require('./mont');
 curve.edwards = require('./edwards');
 
-},{"./base":17,"./edwards":18,"./mont":20,"./short":21}],20:[function(require,module,exports){
+},{"./base":14,"./edwards":15,"./mont":17,"./short":18}],17:[function(require,module,exports){
 var assert = require('assert');
 var curve = require('../curve');
 var elliptic = require('../../elliptic');
@@ -3890,7 +3631,7 @@ Point.prototype.getX = function getX() {
   return this.x.fromRed();
 };
 
-},{"../../elliptic":16,"../curve":19,"assert":3,"bn.js":28,"inherits":36}],21:[function(require,module,exports){
+},{"../../elliptic":13,"../curve":16,"assert":3,"bn.js":25,"inherits":33}],18:[function(require,module,exports){
 var assert = require('assert');
 var curve = require('../curve');
 var elliptic = require('../../elliptic');
@@ -4788,7 +4529,7 @@ JPoint.prototype.isInfinity = function isInfinity() {
   return this.z.cmpn(0) === 0;
 };
 
-},{"../../elliptic":16,"../curve":19,"assert":3,"bn.js":28,"inherits":36}],22:[function(require,module,exports){
+},{"../../elliptic":13,"../curve":16,"assert":3,"bn.js":25,"inherits":33}],19:[function(require,module,exports){
 var curves = exports;
 
 var assert = require('assert');
@@ -5717,7 +5458,7 @@ defineCurve('secp256k1', {
   ]
 });
 
-},{"../elliptic":16,"assert":3,"bn.js":28,"hash.js":30}],23:[function(require,module,exports){
+},{"../elliptic":13,"assert":3,"bn.js":25,"hash.js":27}],20:[function(require,module,exports){
 var assert = require('assert');
 var bn = require('bn.js');
 var elliptic = require('../../elliptic');
@@ -5870,7 +5611,7 @@ EC.prototype.verify = function verify(msg, signature, key) {
   return p.getX().mod(this.n).cmp(r) === 0;
 };
 
-},{"../../elliptic":16,"./key":24,"./signature":25,"assert":3,"bn.js":28}],24:[function(require,module,exports){
+},{"../../elliptic":13,"./key":21,"./signature":22,"assert":3,"bn.js":25}],21:[function(require,module,exports){
 var assert = require('assert');
 var bn = require('bn.js');
 
@@ -6016,7 +5757,7 @@ KeyPair.prototype.inspect = function inspect() {
          ' pub: ' + (this.pub && this.pub.inspect()) + ' >';
 };
 
-},{"../../elliptic":16,"assert":3,"bn.js":28}],25:[function(require,module,exports){
+},{"../../elliptic":13,"assert":3,"bn.js":25}],22:[function(require,module,exports){
 var assert = require('assert');
 var bn = require('bn.js');
 
@@ -6081,7 +5822,7 @@ Signature.prototype.toDER = function toDER(enc) {
   return utils.encode(res, enc);
 };
 
-},{"../../elliptic":16,"assert":3,"bn.js":28}],26:[function(require,module,exports){
+},{"../../elliptic":13,"assert":3,"bn.js":25}],23:[function(require,module,exports){
 var assert = require('assert');
 
 var hash = require('hash.js');
@@ -6196,7 +5937,7 @@ HmacDRBG.prototype.generate = function generate(len, enc, add, addEnc) {
   return utils.encode(res, enc);
 };
 
-},{"../elliptic":16,"assert":3,"hash.js":30}],27:[function(require,module,exports){
+},{"../elliptic":13,"assert":3,"hash.js":27}],24:[function(require,module,exports){
 var assert = require('assert');
 var bn = require('bn.js');
 
@@ -6344,7 +6085,7 @@ function getJSF(k1, k2) {
 }
 utils.getJSF = getJSF;
 
-},{"assert":3,"bn.js":28}],28:[function(require,module,exports){
+},{"assert":3,"bn.js":25}],25:[function(require,module,exports){
 (function(module, exports) {
 
 'use strict';
@@ -8479,7 +8220,7 @@ Mont.prototype.invm = function invm(a) {
 
 })(typeof module === 'undefined' || module, this);
 
-},{}],29:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 var r;
 
 module.exports = function rand(len) {
@@ -8538,7 +8279,7 @@ if (typeof window === 'object') {
   }
 }
 
-},{}],30:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 var hash = exports;
 
 hash.utils = require('./hash/utils');
@@ -8555,7 +8296,7 @@ hash.sha384 = hash.sha.sha384;
 hash.sha512 = hash.sha.sha512;
 hash.ripemd160 = hash.ripemd.ripemd160;
 
-},{"./hash/common":31,"./hash/hmac":32,"./hash/ripemd":33,"./hash/sha":34,"./hash/utils":35}],31:[function(require,module,exports){
+},{"./hash/common":28,"./hash/hmac":29,"./hash/ripemd":30,"./hash/sha":31,"./hash/utils":32}],28:[function(require,module,exports){
 var hash = require('../hash');
 var utils = hash.utils;
 var assert = utils.assert;
@@ -8648,7 +8389,7 @@ BlockHash.prototype._pad = function pad() {
   return res;
 };
 
-},{"../hash":30}],32:[function(require,module,exports){
+},{"../hash":27}],29:[function(require,module,exports){
 var hmac = exports;
 
 var hash = require('../hash');
@@ -8698,7 +8439,7 @@ Hmac.prototype.digest = function digest(enc) {
   return this.outer.digest(enc);
 };
 
-},{"../hash":30}],33:[function(require,module,exports){
+},{"../hash":27}],30:[function(require,module,exports){
 var hash = require('../hash');
 var utils = hash.utils;
 
@@ -8844,7 +8585,7 @@ var sh = [
   8, 5, 12, 9, 12, 5, 14, 6, 8, 13, 6, 5, 15, 13, 11, 11
 ];
 
-},{"../hash":30}],34:[function(require,module,exports){
+},{"../hash":27}],31:[function(require,module,exports){
 var hash = require('../hash');
 var utils = hash.utils;
 var assert = utils.assert;
@@ -9410,7 +9151,7 @@ function g1_512_lo(xh, xl) {
   return r;
 }
 
-},{"../hash":30}],35:[function(require,module,exports){
+},{"../hash":27}],32:[function(require,module,exports){
 var utils = exports;
 var inherits = require('inherits');
 
@@ -9669,9 +9410,9 @@ function shr64_lo(ah, al, num) {
 };
 exports.shr64_lo = shr64_lo;
 
-},{"inherits":36}],36:[function(require,module,exports){
+},{"inherits":33}],33:[function(require,module,exports){
 module.exports=require(8)
-},{"inherits_browser.js":8}],37:[function(require,module,exports){
+},{"inherits_browser.js":8}],34:[function(require,module,exports){
 module.exports={
   "name": "elliptic",
   "version": "1.0.0",
@@ -9734,7 +9475,7 @@ module.exports={
   "readme": "ERROR: No README data found!"
 }
 
-},{}],38:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 var hash = exports;
 
 hash.utils = require('./hash/utils');
@@ -9749,7 +9490,7 @@ hash.sha256 = hash.sha.sha256;
 hash.sha224 = hash.sha.sha224;
 hash.ripemd160 = hash.ripemd.ripemd160;
 
-},{"./hash/common":39,"./hash/hmac":40,"./hash/ripemd":41,"./hash/sha":42,"./hash/utils":43}],39:[function(require,module,exports){
+},{"./hash/common":36,"./hash/hmac":37,"./hash/ripemd":38,"./hash/sha":39,"./hash/utils":40}],36:[function(require,module,exports){
 var hash = require('../hash');
 var utils = hash.utils;
 var assert = utils.assert;
@@ -9835,9 +9576,9 @@ BlockHash.prototype._pad = function pad() {
   return res;
 }
 
-},{"../hash":38}],40:[function(require,module,exports){
-arguments[4][32][0].apply(exports,arguments)
-},{"../hash":38,"hmac.js":32}],41:[function(require,module,exports){
+},{"../hash":35}],37:[function(require,module,exports){
+arguments[4][29][0].apply(exports,arguments)
+},{"../hash":35,"hmac.js":29}],38:[function(require,module,exports){
 var hash = require('../hash');
 var utils = hash.utils;
 
@@ -9982,7 +9723,7 @@ var sh = [
   8, 5, 12, 9, 12, 5, 14, 6, 8, 13, 6, 5, 15, 13, 11, 11
 ];
 
-},{"../hash":38}],42:[function(require,module,exports){
+},{"../hash":35}],39:[function(require,module,exports){
 var hash = require('../hash');
 var utils = hash.utils;
 var assert = utils.assert;
@@ -10199,7 +9940,7 @@ function ft_1(s, x, y, z) {
     return maj32(x, y, z)
 }
 
-},{"../hash":38}],43:[function(require,module,exports){
+},{"../hash":35}],40:[function(require,module,exports){
 var utils = exports;
 var inherits = require('inherits');
 
@@ -10377,139 +10118,7 @@ utils.assert = assert;
 
 utils.inherits = inherits;
 
-},{"inherits":44}],44:[function(require,module,exports){
+},{"inherits":41}],41:[function(require,module,exports){
 module.exports=require(8)
-},{"inherits_browser.js":8}],45:[function(require,module,exports){
-(function (global,__dirname){
-// Copyright 2013 The Closure Library Authors.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS-IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-/**
- * @fileoverview A nodejs script for dynamically requiring Closure within
- * nodejs.
- *
- * Example of usage:
- * <code>
- * require('./bootstrap/nodejs')
- * goog.require('goog.ui.Component')
- * </code>
- *
- * This loads goog.ui.Component in the global scope.
- *
- * If you want to load custom libraries, you can require the custom deps file
- * directly. If your custom libraries introduce new globals, you may
- * need to run goog.nodeGlobalRequire to get them to load correctly.
- *
- * <code>
- * require('./path/to/my/deps.js')
- * goog.bootstrap.nodeJs.nodeGlobalRequire('./path/to/my/base.js')
- * goog.require('my.Class')
- * </code>
- *
- * @author nick@medium.com (Nick Santos)
- *
- * @nocompile
- */
-
-
-var fs = require('fs');
-var path = require('path');
-var vm = require('vm');
-
-
-/**
- * The goog namespace in the global scope.
- */
-global.goog = {};
-
-
-/**
- * Imports a script using Node's require() API.
- *
- * @param {string} src The script source.
- * @param {string=} opt_sourceText The optional source text to evaluate.
- * @return {boolean} True if the script was imported, false otherwise.
- */
-global.CLOSURE_IMPORT_SCRIPT = function(src, opt_sourceText) {
-  // Sources are always expressed relative to closure's base.js, but
-  // require() is always relative to the current source.
-  if (opt_sourceText === undefined) {
-      require('./../' + src);
-  } else {
-      eval(opt_sourceText);
-  }
-  return true;
-};
-
-
-/**
- * Loads a file when using Closure's goog.require() API with goog.modules.
- *
- * @param {string} src The file source.
- * @return {string} The file contents.
- */
-
-global.CLOSURE_LOAD_FILE_SYNC = function(src) {
-  return fs.readFileSync(
-      path.resolve(__dirname, '..', src), { encoding: 'utf-8' });
-};
-
-
-// Declared here so it can be used to require base.js
-function nodeGlobalRequire(file) {
-  vm.runInThisContext.call(
-      global, fs.readFileSync(file), file);
-}
-
-
-// Load Closure's base.js into memory.  It is assumed base.js is in the
-// directory above this directory given this script's location in
-// bootstrap/nodejs.js.
-nodeGlobalRequire(path.resolve(__dirname, '..', 'base.js'));
-
-
-/**
- * Bootstraps a file into the global scope.
- *
- * This is strictly for cases where normal require() won't work,
- * because the file declares global symbols with 'var' that need to
- * be added to the global scope.
- * @suppress {missingProvide}
- *
- * @param {string} file The path to the file.
- */
-goog.nodeGlobalRequire = nodeGlobalRequire;
-
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},"/node_modules/obvious-closure-library/closure/goog/bootstrap")
-},{"fs":2,"path":9,"vm":13}],46:[function(require,module,exports){
-(function (__dirname){
-// Copyright 2015 A Medium Corporation
-
-/**
- * @fileoverview Public interface for packaged files.
- */
-
-exports.dirname = __dirname
-
-/**
- * Loads closure-library in the global scope.
- */
-exports.bootstrap = function () {
-  require('./closure/goog/bootstrap/nodejs')
-}
-
-}).call(this,"/node_modules/obvious-closure-library")
-},{"./closure/goog/bootstrap/nodejs":45}]},{},[1])(1)
+},{"inherits_browser.js":8}]},{},[1])(1)
 });
