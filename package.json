@@ -1,6 +1,7 @@
 {
   "name": "bitauth",
   "description": "Passwordless authentication using Bitcoin cryptography",
+  "license": "MIT",
   "author": {
     "name": "Patrick Nagurny",
     "email": "patrick@bitpay.com"
@@ -21,21 +22,25 @@
     {
       "name": "Braydon Fuller",
       "email": "braydon@bitpay.com"
+    },
+    {
+      "name": "Matthew Wampler-Doty",
+      "email": "matthew.wampler.doty@gmail.com"
     }
   ],
   "scripts": {
-    "make-dist": "sh scripts/make-dist.sh",
+    "make-dist": "./scripts/make-dist.sh",
     "test": "mocha test/*.js --reporter spec"
   },
   "main": "index.js",
-  "version": "0.2.1",
+  "version": "0.2.3",
   "dependencies": {
-    "elliptic": "=1.0.0",
-    "hash.js": "^0.3.2",
+    "body-parser": "^1.2.0",
     "bs58": "^2.0.0",
-    "request": "^2.36.0",
+    "elliptic": "=1.0.0",
     "express": "^4.3.1",
-    "body-parser": "^1.2.0"
+    "hash.js": "^0.3.2",
+    "request": "^2.36.0"
   },
   "devDependencies": {
     "uglify-js": "~2.4.14",
