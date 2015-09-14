@@ -29,7 +29,7 @@
     }
   ],
   "scripts": {
-    "make-dist": "sh scripts/make-dist.sh",
+    "make-dist": "./scripts/make-dist.sh",
     "test": "mocha test/*.js --reporter spec"
   },
   "main": "index.js",
