@@ -145,7 +145,7 @@ describe('bitauth', function () {
             ["コトドリ属（コトドリぞく、学名 Menura）はコトドリ上科コトドリ科 Menuridae に属する鳥の属の一つ。コトドリ科は単型である。",
                 "304502203b287b4e720016aff0144a35b2c5d8738da939238b7481348a2744a8478740370221009e3349f5a99c84359f1cee315a8fb520c317b5ed139c302b82de52c8b358c778"]
         ];
-        refPairs.map(function (pair) {
+        refPairs.forEach(function (pair) {
             var contract = pair[0];
             var signature = pair[1];
             it('should verify reference signature for: "' + contract + '"', function (done) {
