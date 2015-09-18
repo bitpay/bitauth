@@ -1,6 +1,6 @@
 'use strict';
 
-if ( typeof(window) === 'undefined' ) {
+if (typeof(window) === 'undefined') {
   var bitauth = require('../index');
 } else {
   var bitauth = window.bitauth;
@@ -17,29 +17,29 @@ describe('bitauth', function() {
     priv: '97811b691dd7ebaeb67977d158e1da2c4d3eaa4ee4e2555150628acade6b344c',
     pub: '02326209e52f6f17e987ec27c56a1321acf3d68088b8fb634f232f12ccbc9a4575',
     sin: 'Tf3yr5tYvccKNVrE26BrPs6LWZRh8woHwjR'
-  }
+  };
 
   // a private key that will produce a public key with a leading zero
   var privateKeyToZero = 'c6b7f6bfe5bb19b1e390e55ed4ba5df8af6068d0eb89379a33f9c19aacf6c08c';
 
   // keys generated
-  var keys      = null;
+  var keys = null;
 
   // invalid checksum
-  var sinbad    = 'Tf1Jc1xSbqasm5QLwwSQc5umddx2h7mAMhX';
+  var sinbad = 'Tf1Jc1xSbqasm5QLwwSQc5umddx2h7mAMhX';
 
   // valid sin
-  var singood   = 'TfG4ScDgysrSpodWD4Re5UtXmcLbY5CiUHA';
+  var singood = 'TfG4ScDgysrSpodWD4Re5UtXmcLbY5CiUHA';
 
   // data to sign
-  var contract  = 'keyboard cat';
-  var secret    = 'o hai, nsa. how i do teh cryptos?';
-  var password  = 's4705hiru13z!';
+  var contract = 'kéyboard cät';
+  var secret = 'o hai, nsa. how i do teh cryptos?';
+  var password = 's4705hiru13z!';
   var encryptedSecret = '291Dm9unZMwfxBA7BEHiQsraRxCrMRqwJ2TjCWwEH3Sp5QGMehNFNgZLo62sgF5Khe';
- 
+
   // signature from generate keys
   var signature = null;
-  var enc       = null;
+  var enc = null;
 
   describe('#generateSin', function() {
 
@@ -95,7 +95,7 @@ describe('bitauth', function() {
   describe('#verifySignature', function() {
 
     it('should verify the signature', function(done) {
-      bitauth.verifySignature(contract, keys.pub, signature, function(err, valid){
+      bitauth.verifySignature(contract, keys.pub, signature, function(err, valid) {
         should.not.exist(err);
         should.exist(valid);
         valid.should.equal(true);
@@ -111,7 +111,7 @@ describe('bitauth', function() {
       };
 
       signature = bitauth.sign(contract, leadingZeroKeys.priv);
-      bitauth.verifySignature(contract, leadingZeroKeys.pub, signature, function(err, valid){
+      bitauth.verifySignature(contract, leadingZeroKeys.pub, signature, function(err, valid) {
         should.not.exist(err);
         should.exist(valid);
         valid.should.equal(true);
@@ -152,7 +152,7 @@ describe('bitauth', function() {
   describe('#validateSinCallback', function() {
 
     it('should receive error callback', function(done) {
-      var valid = bitauth.validateSin(sinbad, function(err){
+      bitauth.validateSin(sinbad, function(err) {
         should.exist(err);
         err.message.should.equal('Checksum does not match');
         done();
@@ -162,7 +162,7 @@ describe('bitauth', function() {
   });
 
   // node specific tests
-  if ( typeof(window) === 'undefined' ) {
+  if (typeof(window) === 'undefined') {
 
     describe('#encrypt', function() {
 
@@ -194,7 +194,7 @@ describe('bitauth', function() {
     describe('#middleware', function() {
 
       it('should expose an express middleware', function(done) {
-        bitauth.middleware( {} , {} , function() {
+        bitauth.middleware({}, {}, function() {
           done();
         });
       });

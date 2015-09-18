@@ -1,5 +1,5 @@
 // get base functionality
-var bitauth = require('./lib/bitauth');
+var bitauth = require('./lib/bitauth-node');
 
 // add node-specific encrypt/decrypt
 bitauth.encrypt = require('./lib/encrypt');
