@@ -30,7 +30,7 @@
   "maxlen": 120,
   "multistr": true,
 
-  "predef": [ // Extra globals.
+  "predef": [
     "after",
     "afterEach",
     "before",

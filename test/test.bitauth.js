@@ -1,12 +1,7 @@
 'use strict';
 
-if (typeof(window) === 'undefined') {
-  var bitauth = require('../index');
-} else {
-  var bitauth = window.bitauth;
-}
-
-var chai = chai || require('chai');
+var bitauth = require('../');
+var chai = require('chai');
 
 describe('bitauth', function() {
 

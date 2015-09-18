@@ -21,9 +21,8 @@ npm install bitauth
 To generate a browser bundle, you can then run:
 
 ```bash
-npm run make-dist
+gulp browser
 ```
-
 
 ## Advantages over other authentication mechanisms
 
@@ -38,18 +37,18 @@ in HMAC.
 
 ## Technical Overview
 BitAuth uses the same technology in Bitcoin. A public private key pair is created
-using elliptic curve secp256k1. The public SIN (System identification number), 
-like a bitcoin address, is the RIPEMD 160, SHA256 hash of the public key. 
+using elliptic curve secp256k1. The public SIN (System identification number),
+like a bitcoin address, is the RIPEMD 160, SHA256 hash of the public key.
 See https://en.bitcoin.it/wiki/Identity_protocol_v1 for complete details.
 
 In each request, the client includes a nonce to prevent replay attacks. The client
-signs the full url with the request body concatenated if there is one. The signature 
-is included in the `x-signature` header and the public key is included in the 
+signs the full url with the request body concatenated if there is one. The signature
+is included in the `x-signature` header and the public key is included in the
 `x-identity` header.
 
 The server verifies that the signature is valid and that it matches the identity (the public key).
 It then computes the SIN from the public key, and sees whether that SIN has access
-to the requested resource. The nonce is checked to make sure it is higher than 
+to the requested resource. The nonce is checked to make sure it is higher than
 the previously used nonce.
 
 ## Technology is readily available
@@ -62,7 +61,7 @@ to start using BitAuth.
 ## Problems with password authentication
 
 * Have to keep track of a separate password for every web service. People forget
-passwords, encouraging them to reuse passwords and opening themselves up to 
+passwords, encouraging them to reuse passwords and opening themselves up to
 having multiple services compromised.
 * Brute force attacks on weak passwords.
 * Passwords may travel over plaintext
@@ -76,16 +75,16 @@ not worry about one service gaining access to another.
 
 In the future, an identity system could be built around BitAuth keys where a user
 could create one key to represent an identity which could authenticate against
-multiple services. 
+multiple services.
 
-In order for this to work, there would have to be a browser 
-integration or plugin which would manage these identities and a Javascript API 
-where websites could sign requests going to their website with the private key, 
+In order for this to work, there would have to be a browser
+integration or plugin which would manage these identities and a Javascript API
+where websites could sign requests going to their website with the private key,
 but without exposing the private key to the third party sites.
 
 There also needs to be a public place to store SIN's, preferably in
-a decentralized blockchain or datastore like namecoin. Key revocations could 
-be stored here as well as reviews/feedback to build a reputation around an 
+a decentralized blockchain or datastore like namecoin. Key revocations could
+be stored here as well as reviews/feedback to build a reputation around an
 identity.
 
 ## Examples
@@ -188,7 +187,7 @@ for(k in keys) {
     }
     if(body) {
       console.log(body);
-    }    
+    }
   });
 }
 
@@ -206,21 +205,19 @@ app.use( bitauth.middleware );
 To build a browser compatible version of BitAuth, run the following command from the project's root directory:
 
 ```bash
-npm run make-dist
+gulp browser
 ```
 
-This will output `bitauth.browser.min.js` to the `dist` directory. The script introduces a global variable at `window.bitauth`.
+This will output `bitauth.min.js` to project directory. The script can be loaded using `require('bitauth')`.
 
-
-To then run tests for a web browser open `test/index.html` in a browser, such as:
+To then run tests for a web browser:
 
 ```bash
-firefox test/index.html
-chromium-browser test/index.html
+gulp test:browser
 ```
 
 To run tests for Node.js:
 
 ```bash
-npm run test
+gulp test:node
 ```
