@@ -32,7 +32,8 @@ var namePath = path.resolve(__dirname, './bitauth');
 var bundlePath = namePath + '.js';
 var minPath = namePath + '.min.js';
 
-var browserifyCommand = browserifyPath + ' --require ' + indexPath + ':bitauth -o ' + bundlePath;
+var browserifyCommand = browserifyPath + ' -p bundle-collapser/plugin --require ' +
+  indexPath + ':bitauth -o ' + bundlePath;
 var uglifyCommand = uglifyPath + ' ' + bundlePath + ' --compress --mangle -o ' + minPath;
 
 gulp.task('browser:uncompressed', shell.task([

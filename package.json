@@ -24,7 +24,7 @@
     }
   ],
   "scripts": {
-    "make-dist": "sh scripts/make-dist.sh",
+    "make-dist": "gulp browser",
     "test": "gulp test"
   },
   "main": "index.js",
@@ -36,6 +36,7 @@
   },
   "devDependencies": {
     "benchmark": "^1.0.0",
+    "bundle-collapser": "^1.2.1",
     "browserify": "=6.1.0",
     "chai": "=1.9.1",
     "gulp": "^3.8.10",
