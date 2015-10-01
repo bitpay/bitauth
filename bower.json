@@ -1,7 +1,7 @@
 {
   "name": "bitauth",
   "main": "./bitauth.min.js",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "homepage": "https://github.com/bitpay/bitauth",
   "authors": [
     "BitPay, Inc."
