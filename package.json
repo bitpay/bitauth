@@ -28,7 +28,7 @@
     "test": "gulp test"
   },
   "main": "index.js",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "dependencies": {
     "bs58": "^2.0.0",
     "elliptic": "=1.0.0",
