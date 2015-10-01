@@ -1,6 +1,6 @@
 node_modules
-bitauth.js
-bitauth.min.js
-tests.js
+./bitauth.js
+./bitauth.min.js
+./tests.js
 
 
