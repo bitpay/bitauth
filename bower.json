@@ -1,0 +1,29 @@
+{
+  "name": "bitauth",
+  "main": "./bitauth.min.js",
+  "version": "0.2.1",
+  "homepage": "https://github.com/bitpay/bitauth",
+  "authors": [
+    "BitPay, Inc."
+  ],
+  "description": "Passwordless authentication using Bitcoin cryptography",
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "bitcoin",
+    "bitcore",
+    "btc",
+    "satoshi"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "CONTRIBUTING.md",
+    "gulpfile.js",
+    "lib",
+    "index.js",
+    "karma.conf.js",
+    "test"
+  ]
+}
