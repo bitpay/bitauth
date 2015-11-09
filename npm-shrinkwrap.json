@@ -1,0 +1,77 @@
+{
+  "name": "bitauth",
+  "version": "0.3.1",
+  "npm-shrinkwrap-version": "5.1.0",
+  "dependencies": {
+    "bs58": {
+      "version": "2.0.1",
+      "resolved": "https://registry.npmjs.org/bs58/-/bs58-2.0.1.tgz"
+    },
+    "elliptic": {
+      "version": "1.0.0",
+      "resolved": "https://registry.npmjs.org/elliptic/-/elliptic-1.0.0.tgz",
+      "dependencies": {
+        "bn.js": {
+          "version": "1.3.0",
+          "resolved": "https://registry.npmjs.org/bn.js/-/bn.js-1.3.0.tgz"
+        },
+        "brorand": {
+          "version": "1.0.5",
+          "resolved": "https://registry.npmjs.org/brorand/-/brorand-1.0.5.tgz"
+        },
+        "hash.js": {
+          "version": "1.0.3",
+          "resolved": "https://registry.npmjs.org/hash.js/-/hash.js-1.0.3.tgz"
+        },
+        "inherits": {
+          "version": "2.0.1",
+          "resolved": "https://registry.npmjs.org/inherits/-/inherits-2.0.1.tgz"
+        }
+      }
+    },
+    "secp256k1": {
+      "version": "2.0.2",
+      "resolved": "https://registry.npmjs.org/secp256k1/-/secp256k1-2.0.2.tgz",
+      "dependencies": {
+        "bindings": {
+          "version": "1.2.1",
+          "resolved": "https://registry.npmjs.org/bindings/-/bindings-1.2.1.tgz"
+        },
+        "bluebird": {
+          "version": "3.0.5",
+          "resolved": "https://registry.npmjs.org/bluebird/-/bluebird-3.0.5.tgz"
+        },
+        "bn.js": {
+          "version": "4.1.1",
+          "resolved": "https://registry.npmjs.org/bn.js/-/bn.js-4.1.1.tgz"
+        },
+        "elliptic": {
+          "version": "6.0.2",
+          "resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.0.2.tgz",
+          "dependencies": {
+            "brorand": {
+              "version": "1.0.5",
+              "resolved": "https://registry.npmjs.org/brorand/-/brorand-1.0.5.tgz"
+            },
+            "hash.js": {
+              "version": "1.0.3",
+              "resolved": "https://registry.npmjs.org/hash.js/-/hash.js-1.0.3.tgz"
+            },
+            "inherits": {
+              "version": "2.0.1",
+              "resolved": "https://registry.npmjs.org/inherits/-/inherits-2.0.1.tgz"
+            }
+          }
+        },
+        "nan": {
+          "version": "2.1.0",
+          "resolved": "https://registry.npmjs.org/nan/-/nan-2.1.0.tgz"
+        },
+        "object-assign": {
+          "version": "4.0.1",
+          "resolved": "https://registry.npmjs.org/object-assign/-/object-assign-4.0.1.tgz"
+        }
+      }
+    }
+  }
+}

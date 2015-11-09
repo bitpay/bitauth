@@ -82,6 +82,7 @@ describe('bitauth', function() {
     it('should sign the string', function(done) {
       signature = bitauth.sign(contract, keys.priv);
       should.exist(signature);
+      signature.should.match(/^[0-9a-fA-F]+$/);
       done();
     });
 
