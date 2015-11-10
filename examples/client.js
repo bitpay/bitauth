@@ -1,5 +1,5 @@
 var request = require('request');
-var bitauth = require('../lib/bitauth');
+var bitauth = require('..'); // or require('bitauth');
 
 // These can be generated with bitauth.generateSin()
 var keys = {
