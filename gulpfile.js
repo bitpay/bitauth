@@ -26,22 +26,37 @@ var git = require('gulp-git');
 
 var binPath = path.resolve(__dirname, './node_modules/.bin/');
 var browserifyPath = path.resolve(binPath, './browserify');
+var derequirePath = path.resolve(binPath, './derequire');
 var uglifyPath = path.resolve(binPath, './uglifyjs');
 var indexPath = path.resolve(__dirname, './lib/bitauth-browserify');
 var namePath = path.resolve(__dirname, './bitauth');
 var bundlePath = namePath + '.js';
 var minPath = namePath + '.min.js';
+var standaloneBundlePath = namePath + '.standalone.js';
+var standaloneMinPath = namePath + '.standalone.min.js';
+var externsPath = namePath + '.ext.js';
 
 var browserifyCommand = browserifyPath + ' -p bundle-collapser/plugin --require ' +
   indexPath + ':bitauth -o ' + bundlePath;
+var browserifyStandaloneCommand = [browserifyPath, indexPath, '--standalone', 'bitauth', 
+    '|', derequirePath, '>', standaloneBundlePath].join(' ');
 var uglifyCommand = uglifyPath + ' ' + bundlePath + ' --compress --mangle -o ' + minPath;
+var uglifyStandaloneCommand = [uglifyPath, standaloneBundlePath, '--compress', '--mangle', '-o',  standaloneMinPath].join(' ');
 
 gulp.task('browser:uncompressed', shell.task([
   browserifyCommand
 ]));
 
+gulp.task('browser:standalone:uncompressed', shell.task([
+  browserifyStandaloneCommand
+]));
+
 gulp.task('browser:compressed', ['browser:uncompressed'], shell.task([
   uglifyCommand
+]));
+
+gulp.task('browser:standalone:compressed', shell.task([
+  uglifyStandaloneCommand
 ]));
 
 gulp.task('browser:maketests', shell.task([
@@ -49,7 +64,7 @@ gulp.task('browser:maketests', shell.task([
 ]));
 
 gulp.task('browser', function(callback) {
-  runsequence(['browser:compressed'], callback);
+  runsequence(['browser:compressed', 'browser:standalone:compressed'], callback);
 });
 
 
@@ -92,20 +107,37 @@ gulp.task('release:checkout-master', function(cb) {
   }, cb);
 });
 
-gulp.task('release:sign-built-files', shell.task([
-  'gpg --yes --out ' + namePath + '.js.sig --detach-sig ' + namePath + '.js',
-  'gpg --yes --out ' + namePath + '.min.js.sig --detach-sig ' + namePath + '.min.js'
+gulp.task('release:sign-built-files', 
+		['browser:uncompressed', 
+		 'browser:compressed',
+		 'browser:standalone:uncompressed',
+		 'browser:standalone:compressed'], 
+  shell.task([
+    'gpg --yes --out ' + bundlePath + '.sig --detach-sig ' + bundlePath,
+    'gpg --yes --out ' + minPath + '.sig --detach-sig ' + minPath, 
+    'gpg --yes --out ' + standaloneBundlePath + '.sig --detach-sig ' + standaloneBundlePath,
+    'gpg --yes --out ' + standaloneMinPath + '.sig --detach-sig ' + standaloneMinPath,
+    'gpg --yes --out ' + externsPath + '.sig --detach-sig ' + externsPath,
 ]));
 
 var buildFiles = ['./package.json'];
 var signatureFiles = [];
-buildFiles.push(namePath + '.js');
-buildFiles.push(namePath + '.js.sig');
-buildFiles.push(namePath + '.min.js');
-buildFiles.push(namePath + '.min.js.sig');
+buildFiles.push(bundlePath);
+buildFiles.push(bundlePath + '.sig');
+buildFiles.push(minPath);
+buildFiles.push(minPath + '.sig');
+buildFiles.push(standaloneBundlePath);
+buildFiles.push(standaloneBundlePath + '.sig');
+buildFiles.push(standaloneMinPath);
+buildFiles.push(standaloneMinPath + '.sig');
+buildFiles.push(externsPath);
+buildFiles.push(externsPath + '.sig');
 buildFiles.push('./bower.json');
-signatureFiles.push(namePath + '.js.sig');
-signatureFiles.push(namePath + '.min.js.sig');
+signatureFiles.push(bundlePath + '.sig');
+signatureFiles.push(minPath + '.sig');
+signatureFiles.push(standaloneBundlePath + '.sig');
+signatureFiles.push(standaloneMinPath + '.sig');
+signatureFiles.push(externsPath + '.sig');
 
 var addFiles = function() {
   return gulp.src(buildFiles)
