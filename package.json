@@ -1,13 +1,11 @@
 {
   "name": "bitauth",
+  "version": "0.3.2",
   "description": "Passwordless authentication using Bitcoin cryptography",
+  "license": "MIT",
   "author": {
     "name": "Patrick Nagurny",
     "email": "patrick@bitpay.com"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bitpay/bitauth.git"
   },
   "contributors": [
     {
@@ -23,12 +21,23 @@
       "email": "braydon@bitpay.com"
     }
   ],
+  "files": [
+    "lib",
+    "browser.js",
+    "index.js",
+    "LICENSE",
+    "package.json",
+    "README.md"
+  ],
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bitpay/bitauth.git"
+  },
   "scripts": {
     "make-dist": "gulp browser",
     "test": "gulp test"
   },
-  "main": "index.js",
-  "version": "0.3.2",
   "dependencies": {
     "bs58": "^2.0.0",
     "elliptic": "=1.0.0",
@@ -54,5 +63,7 @@
     "run-sequence": "^1.0.2",
     "uglify-js": "~2.4.14"
   },
-  "license": "MIT"
+  "browser": {
+    "index.js": "browser.js"
+  }
 }
