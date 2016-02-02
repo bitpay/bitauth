@@ -1,23 +1,32 @@
-language: node_js
 sudo: false
-compiler:
-  - gcc
-  - clang
+os:
+  - linux
+language: node_js
+node_js:
+  - "0.10"
+  - "0.11"
+  - "0.12"
+  - "4"
+  - "5"
 addons:
   apt:
     sources:
-    - ubuntu-toolchain-r-test
+      - ubuntu-toolchain-r-test
     packages:
-    - gcc-4.8
-    - g++-4.8
-    - clang
-node_js:
-  - '0.10'
-  - '0.12'
-  - '4'
+      - g++-4.8
 before_install:
-  - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
-  - export CXX="g++-4.8" CC="gcc-4.8"
-install:
-  - npm install
+env:
+  global:
+    - DISPLAY=:99.0
+  matrix:
+    - CXX=g++-4.8 TEST_SUITE=test:node
+matrix:
+  include:
+    - os: linux
+      node_js: "4"
+      env: CXX=g++-4.8 TEST_SUITE=lint
+    - os: linux
+      node_js: "4"
+      env: CXX=g++-4.8 TEST_SUITE=test:browser
+script: ./node_modules/.bin/gulp $TEST_SUITE
