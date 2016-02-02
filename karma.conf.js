@@ -1,7 +1,6 @@
 'use strict';
 
-module.exports = function(config) {
-
+module.exports = function (config) {
   config.set({
     browsers: ['Firefox'],
     frameworks: ['mocha'],
@@ -14,5 +13,4 @@ module.exports = function(config) {
       'karma-firefox-launcher'
     ]
   });
-
 };

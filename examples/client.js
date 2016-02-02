@@ -9,7 +9,7 @@ var keys = {
 
 // GET
 
-for(k in keys) {
+for (var k in keys) {
   var url = 'http://localhost:3000/user';
   var dataToSign = url;
   var options = {
@@ -20,13 +20,8 @@ for(k in keys) {
     }
   };
 
-  request.get(options, function(err, response, body) {
-    if(err) {
-      console.log(err);
-    }
-    if(body) {
-      console.log(body);
-    }
+  request.get(options, function (err, response, body) {
+    console.log(err !== null ? err : body);
   });
 }
 
@@ -34,11 +29,11 @@ var pizzas = ['pepperoni', 'sausage', 'veggie', 'hawaiian'];
 
 // POST
 
-for(k in keys) {
-  var url = 'http://localhost:3000/pizzas';
+for (k in keys) {
+  url = 'http://localhost:3000/pizzas';
   var data = {type: pizzas[Math.floor(Math.random() * pizzas.length)]};
-  var dataToSign = url + JSON.stringify(data);
-  var options = {
+  dataToSign = url + JSON.stringify(data);
+  options = {
     url: url,
     headers: {
       'x-identity': bitauth.getPublicKeyFromPrivateKey(keys[k]),
@@ -47,12 +42,7 @@ for(k in keys) {
     json: data
   };
 
-  request.post(options, function(err, response, body) {
-    if(err) {
-      console.log(err);
-    }
-    if(body) {
-      console.log(body);
-    }    
+  request.post(options, function (err, response, body) {
+    console.log(err !== null ? err : body);
   });
 }
