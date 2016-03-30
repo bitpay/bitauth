@@ -40,6 +40,7 @@
     "browserify": "~11.2.0",
     "bundle-collapser": "^1.2.1",
     "chai": "=1.9.1",
+    "derequire": "^2.0.3",
     "express": "^4.13.3",
     "gulp": "^3.8.10",
     "gulp-bump": "^0.1.11",
