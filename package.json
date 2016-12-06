@@ -25,7 +25,10 @@
   ],
   "scripts": {
     "make-dist": "gulp browser",
-    "test": "gulp test"
+    "test": "gulp test",
+    "examples": "npm run examples:client:build && npm run examples:server",
+    "examples:client:build": "browserify examples/client.js -o examples/bundle.js",
+    "examples:server": "node examples/server.js"
   },
   "main": "index.js",
   "version": "0.3.2",
