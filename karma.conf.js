@@ -3,7 +3,7 @@
 module.exports = function(config) {
 
   config.set({
-    browsers: ['Firefox'],
+    browsers: ['PhantomJS'],
     frameworks: ['mocha'],
     singleRun: true,
     files: [
@@ -11,7 +11,7 @@ module.exports = function(config) {
     ],
     plugins: [
       'karma-mocha',
-      'karma-firefox-launcher'
+      'karma-phantomjs-launcher'
     ]
   });
 
