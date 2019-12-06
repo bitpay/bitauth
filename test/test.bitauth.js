@@ -151,8 +151,6 @@ describe('bitauth', function() {
             var contract = pair[0];
             var signature = pair[1];
             it('should verify reference signature for: "' + contract + '"', function (done) {
-              console.log(bitauth.sign(pair[0], priv).toString('hex'));
-              console.log(pair[1]);
                 bitauth.verifySignature(contract, pub, signature, function (err, valid) {
                     should.not.exist(err);
                     should.exist(valid);
