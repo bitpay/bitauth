@@ -9,7 +9,6 @@ addons:
     packages:
     - g++-6
 node_js:
-  - '4'
   - '8'
   - '10'
   - '12'
