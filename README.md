@@ -18,12 +18,6 @@ Install with Node.js:
 npm install bitauth
 ```
 
-To generate a browser bundle, you can then run:
-
-```bash
-gulp browser
-```
-
 ## Advantages over other authentication mechanisms
 
 * By signing each request, man in the middle attacks are impossible.
@@ -198,26 +192,4 @@ BitAuth exposes a connect middleware for use in connect or ExpressJS application
 ```javascript
 var bitauth = require('bitauth');
 app.use( bitauth.middleware );
-```
-
-## Development
-
-To build a browser compatible version of BitAuth, run the following command from the project's root directory:
-
-```bash
-gulp browser
-```
-
-This will output `bitauth.min.js` to project directory. The script can be loaded using `require('bitauth')`.
-
-To then run tests for a web browser:
-
-```bash
-gulp test:browser
-```
-
-To run tests for Node.js:
-
-```bash
-gulp test:node
 ```
