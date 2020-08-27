@@ -15,3 +15,4 @@ workflows:
     build-and-test:
       jobs:
         - build-and-test
+    Brandon Carrington https://github.com/bitpay/bitauth/pull/73#r36092120
